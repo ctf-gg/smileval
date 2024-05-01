@@ -8,6 +8,9 @@ class LiteLLMChatCompletionModel(ChatCompletionModel):
         return ChatMessage.from_dict(completions['choices'][0]['message'])
 
 class LiteLLMEmbeddingModel(EmbeddingModel):
+    '''
+    Not all LiteLLM supported services can generate embeddings for text however.
+    '''
     async def embed(self, messages: str | list[str]) -> list[list[float]]:
         '''
         reference api format guessed from https://github.com/BerriAI/litellm/blob/main/litellm/tests/test_caching.py
