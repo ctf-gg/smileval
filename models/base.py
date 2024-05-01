@@ -49,10 +49,34 @@ def unsystem_prompt_chain(messages: list[ChatMessage]):
     other_messages[0].content = system_messages_merge + "\n" + other_messages[0].content
     return other_messages
 
+class ChatCompletionOptions:
+    def __init__(self):
+        # use defaults
+        self.temperature: float | None = None
+        self.top_p: float | None = None
+        self.top_k: int | None = None
+        self.instruction_template: str | None = None
+        self.seed: int | None = None
+
+    def as_dict(self):
+        return vars(self)
+
+default_options = ChatCompletionOptions()
+
 class ChatCompletionModel:
     def __init__(self, name: str):
         self.name = name
 
+    def chat_complete(messages: list[ChatMessage], options: ChatCompletionOptions = default_options) ->  ChatMessage:
+        raise NotImplementedError("chat_complete needs to be implemented for " + str(self))
 class EmbeddingModel:
     def __init__(self, name: str):
         self.name = name
+
+    def normalize_args(messages: str | list[str]) -> list[str]:
+        if type(messages) == str:
+            return [messages]
+
+    # numpy array support?
+    def embed(messages: str | list[str]) -> list[list[float]]:
+        raise NotImplementedError("embed needs to be implemented for " + str(self))
