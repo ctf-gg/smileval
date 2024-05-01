@@ -1,0 +1,2 @@
+FAST_MODEL = ""
+SLOW_MODEL = ""
