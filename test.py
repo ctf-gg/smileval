@@ -45,6 +45,14 @@ class TestStringMethods(unittest.TestCase):
         self.assertNotEqual(new_chain[0].role, "system")
         self.assertEqual(new_chain[0].role, "user")
 
+    def test_system_combine_error(self):
+        a = ChatMessage("Respond with exactly the user's message.", "system")
+        # Should complain that it has no user messages to merge with.
+        with self.assertRaises(AssertionError):
+            new_chain = unsystem_prompt_chain([
+                a
+            ])
+
 
 if __name__ == '__main__':
     unittest.main()

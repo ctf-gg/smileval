@@ -59,8 +59,8 @@ def unsystem_prompt_chain(messages: list[ChatMessage]):
     for system_message in filter(lambda m: m.role == "system", messages):
         system_messages_merge += system_messages_merge + system_message.content + "\n"
     other_messages = list(filter(lambda m: m.role != "system", messages))
-    assert len(other_messages) > 0, IndexError("Cannot unsystem message a message chain with only system messages.")
-    assert other_messages[0].is_user(), ValueError("First non-system message must be from user")
+    assert len(other_messages) > 0, "Cannot unsystem message a message chain with only system messages."
+    assert other_messages[0].is_user(), "First non-system message must be from user"
     other_messages[0].content = system_messages_merge + "\n" + other_messages[0].content
     return other_messages
 
