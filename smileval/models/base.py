@@ -90,10 +90,10 @@ class EmbeddingModel:
     def __init__(self, name: str):
         self.name = name
 
-    def normalize_args(messages: str | list[str]) -> list[str]:
+    def normalize_args(self, messages: str | list[str]) -> list[str]:
         if type(messages) == str:
             return [messages]
 
     # numpy array support?
-    async def embed(messages: str | list[str]) -> list[list[float]]:
+    async def embed(self, messages: str | list[str]) -> list[list[float]]:
         raise NotImplementedError("embed needs to be implemented for " + str(self))
