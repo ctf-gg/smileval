@@ -11,13 +11,19 @@ SEP_ONE_SIDED = "{}) {}"
 SEP_PARENTHESES = "({}) {}"
 SEP_BRACKETS = "[{}] {}"
 
+# improved prompt someone else wrote, just here for testing
+EXTRA_TEST = '''Answer the following question. Wrap your answer choice in brackets.
+
+Current date: 2024-05-02'''
+
 PRESENTATION_SELECTION_TYPES = {
     "alphabet": {
         "system": "Answer with only the letter of the correct answer given the question.",
         "choices": ALPHABET
     },
     "capital_alphabet": {
-        "system": "Answer with only the letter of the correct answer given the question.",
+        # "Answer with only the letter of the correct answer given the question.",
+        "system": EXTRA_TEST,
         "choices": CAPITAL_ALPHABET
     },
      "funky_capital_alphabet": {

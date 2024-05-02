@@ -8,7 +8,7 @@ loader:
 model:
   class_path: smileval.models.ollama.OllamaChatCompletionModel
   init_args:
-    name: "wizardlm2" # :8b-instruct-fp16
+    name: "phi3" # :8b-instruct-fp16
 
 seed: 69424269
 parellel: 1
