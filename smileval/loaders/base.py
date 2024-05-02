@@ -87,7 +87,7 @@ class Loader:
         raise StopIteration()
 
     # autoresume can be implemented using this
-    def is_determinisitc(self) -> bool:
+    def is_determinisitic(self) -> bool:
         return False
 
     # return -1 if unknown
