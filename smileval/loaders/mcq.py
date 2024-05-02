@@ -18,6 +18,7 @@ class MCQQuestionAskExperiment(Experiment):
         self.answer_choices = answer_choices
         self.correct_answers = correct_answers
         # prob won't use this in case of shuffling
+        # print(self.correct_answers, answer_choices)
         self.correct_indexes = [
             self.answer_choices.index(answer) for answer in correct_answers
         ]
@@ -42,13 +43,14 @@ class MCQQuestionAskExperiment(Experiment):
 
         answer = await context.generate(prompt, system_prompt)
 
-        symbols = self.formatting["question_answer_format"]["choices"]
+        symbols = self.formatting["presentation_selection_type"]["choices"]
 
         if answer in symbols:
             chosen_index = symbols.index(answer)
-            answer_text = answer_choices[chosen_index]
-            if answer_text in self.correct_answers:
-                outcome.set_score_off_bool(True)
+            if chosen_index < len(answer_choices):
+                answer_text = answer_choices[chosen_index]
+                if answer_text in self.correct_answers:
+                    outcome.set_score_off_bool(True)
 
         return outcome
 

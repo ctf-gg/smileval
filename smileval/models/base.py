@@ -1,5 +1,6 @@
 # THis file should not load any dependencies in specific
 import asyncio
+import os
 
 class ChatMessage:
     def __init__(self, content: str, role: str = "user"):
@@ -16,6 +17,12 @@ class ChatMessage:
             "content": self.content,
             "role": self.role
         }
+
+    def __repr__(self):
+        return "<{}: {}>".format(self.role, self.content)
+
+    def __str__(self):
+        return "<{}: {}>".format(self.role, self.content)
     
     # a bit unpythonic but there if I need it
     def clone(self):
@@ -66,13 +73,26 @@ def unsystem_prompt_chain(messages: list[ChatMessage]):
     return other_messages
 
 class ChatCompletionOptions:
-    def __init__(self):
+    def __init__(self, seed: int | None = None, **kwargs):
         # use defaults
         self.temperature: float | None = None
         self.top_p: float | None = None
         self.top_k: int | None = None
         self.instruction_template: str | None = None
-        self.seed: int | None = None
+        self.seed: int | None = seed
+        # bad hack ig
+        self.__dict__.update(kwargs)
+
+    def update(self, new_dict):
+        self.__dict__.update(new_dict)
+
+    @staticmethod
+    def merge(a: "ChatCompletionOptions", b: "ChatCompletionOptions"):
+        merged = {
+            **a,
+            **b
+        }
+        return ChatCompletionOptions(**merged)
 
     def as_dict(self):
         return vars(self)
@@ -85,8 +105,17 @@ class ChatCompletionModel:
 
     # apparently in python coroutine return type is implied unlike js typings
     # TODO: what if you have multiple completions? prob low priority
+
     async def chat_complete(self, messages: list[ChatMessage], options: ChatCompletionOptions) ->  ChatMessage:
         raise NotImplementedError("chat_complete needs to be implemented for " + str(self))
+
+    def chat_complete_log_request(self, messages: list[ChatMessage], options: ChatCompletionOptions) ->  ChatMessage:
+        if os.getenv("SMILEVAL_LOG_COMPLETIONS"):
+            print(messages)
+
+    def chat_complete_log_response(self, response: str) ->  ChatMessage:
+        if os.getenv("SMILEVAL_LOG_COMPLETIONS"):
+            print("Returned back ",response)
 class EmbeddingModel:
     def __init__(self, name: str):
         self.name = name

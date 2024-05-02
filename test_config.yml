@@ -2,3 +2,11 @@ loader:
   class_path: smileval.loaders.mcq.MCQQuestionLoader
   init_args:
     input_file_path: test.csv
+
+model:
+  class_path: smileval.models.ollama.OllamaChatCompletionModel
+  init_args:
+    name: "llama3"
+
+seed: 69424269
+parellel: 1

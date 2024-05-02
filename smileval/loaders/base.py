@@ -39,7 +39,8 @@ class ExperimentContext:
         elif system_prompt is not None:
             chain.append(ChatMessage(content = system_prompt, role = "system"))
         chain.append(ChatMessage(message))
-        return (await self.chat_model.chat_complete(chain, self.chat_model_options))["content"]
+        final_options = ChatCompletionOptions.merge(self.chat_model_options, ChatCompletionOptions(seed = self.seed)) if self.chat_model_options else ChatCompletionOptions(seed = self.seed)
+        return (await self.chat_model.chat_complete(chain, final_options)).content
 
 class ExperimentMetadata:
     def __init__(self, name: str | None = None, weight: int = 1):
@@ -94,3 +95,6 @@ class Loader:
     # return -1 if unknown
     def num_experiments(self) -> int:
         return 0
+
+    def __iter__(self):
+        return self
