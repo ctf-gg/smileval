@@ -1,0 +1,4 @@
+loader:
+  class_path: smileval.loaders.mcq.MCQQuestionLoader
+  init_args:
+    input_file_path: test.csv

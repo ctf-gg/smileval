@@ -20,7 +20,7 @@ PRESENTATION_SELECTION_TYPES = {
     },
      "numbers": {
         "system": "Answer with only the number of the correct answer given the question.",
-        "choices": NUMMBERS
+        "choices": NUMBERS
     }
 }
 
