@@ -18,11 +18,14 @@ class OllamaChatCompletionModel(ChatCompletionModel):
     
     async def chat_complete(self, messages: list[ChatMessage], options: ChatCompletionOptions = default_options) -> ChatMessage:
         super().chat_complete_log_request(messages, options)
+        messages, options = super().preprocess_inputs(messages, options)
         ollama_options = {}
         if options.seed:
             ollama_options["seed"] = options.seed
-        elif options.temperature:
-            ollama_options["temperature"] = temperature
+        if options.temperature:
+            ollama_options["temperature"] = options.temperature
+        if options.stop_tokens:
+            ollama_options["stop"] = options.stop_tokens
         completion = await self.client.chat(model = self.name, messages = ChatMessage.to_api_format(messages), options = ollama_options)
         super().chat_complete_log_response(completion['message'])
         return ChatMessage.from_dict(completion['message']).mark_as_generated()

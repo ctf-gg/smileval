@@ -69,8 +69,20 @@ def unsystem_prompt_chain(messages: list[ChatMessage]):
     other_messages = list(filter(lambda m: m.role != "system", messages))
     assert len(other_messages) > 0, "Cannot unsystem message a message chain with only system messages."
     assert other_messages[0].is_user(), "First non-system message must be from user"
+    other_messages[0] =  other_messages[0].clone()
     other_messages[0].content = system_messages_merge + "\n" + other_messages[0].content
     return other_messages
+
+def minimize(inp):
+    out = inp.copy()
+    dels = []
+    for key in out:
+        if out[key] is None:
+            dels.append(key)
+
+    for key in dels:
+        del out[key]
+    return out
 
 class ChatCompletionOptions:
     def __init__(self, seed: int | None = None, **kwargs):
@@ -80,6 +92,8 @@ class ChatCompletionOptions:
         self.top_k: int | None = None
         self.instruction_template: str | None = None
         self.seed: int | None = seed
+        self.use_system_prompt_workaround = None
+        self.stop_tokens = None
         # bad hack ig
         self.__dict__.update(kwargs)
 
@@ -89,8 +103,8 @@ class ChatCompletionOptions:
     @staticmethod
     def merge(a: "ChatCompletionOptions", b: "ChatCompletionOptions"):
         merged = {
-            **a,
-            **b
+            **minimize(a.as_dict()),
+            **minimize(b.as_dict())
         }
         return ChatCompletionOptions(**merged)
 
@@ -103,8 +117,15 @@ class ChatCompletionModel:
     def __init__(self, name: str):
         self.name = name
 
+
+
     # apparently in python coroutine return type is implied unlike js typings
     # TODO: what if you have multiple completions? prob low priority
+
+    def preprocess_inputs(self, messages: list[ChatMessage], options: ChatCompletionOptions) -> [list[ChatMessage], ChatCompletionOptions]:
+        if options.use_system_prompt_workaround:
+            messages = unsystem_prompt_chain(messages[:])
+        return messages, options
 
     async def chat_complete(self, messages: list[ChatMessage], options: ChatCompletionOptions) ->  ChatMessage:
         raise NotImplementedError("chat_complete needs to be implemented for " + str(self))

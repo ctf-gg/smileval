@@ -2,6 +2,7 @@ loader:
   class_path: smileval.loaders.mcq.MCQQuestionLoader
   init_args:
     input_file_path: test.csv
+    use_example: false
 
 model:
   class_path: smileval.models.ollama.OllamaChatCompletionModel
@@ -10,3 +11,12 @@ model:
 
 seed: 69424269
 parellel: 1
+options:
+  class_path: smileval.models.ChatCompletionOptions
+  dict_kwargs:
+    use_system_prompt_workaround: false
+    stop_tokens2:
+      - "\n"
+      # phi moment
+      - "<|end|>"
+      - "<|eot_id|>"

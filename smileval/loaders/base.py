@@ -5,7 +5,7 @@ class ExperimentContext:
     def __init__(self, chat_model: ChatCompletionModel):
         self.chat_model: ChatCompletionModel = chat_model
         self.embedding_model: EmbeddingModel | None = None
-        self.chat_model_options: ChatCompletionOptions | None = None
+        self.chat_model_options: ChatCompletionOptions | None = ChatCompletionOptions()
         self.seed: int | None = None
         self.default_system_prompt: str | None = None 
 
@@ -32,12 +32,14 @@ class ExperimentContext:
             summary_dict["seed"] = seed
         return summary_dict
 
-    async def generate(self, message: str, system_prompt: str | None = None) -> str:
+    async def generate(self, message: str, system_prompt: str | None = None, shot_messages: list[ChatMessage] | None = None) -> str:
         chain = []
         if self.default_system_prompt is not None and not system_prompt:
             chain.append(ChatMessage(content = self.default_system_prompt, role = "system"))
         elif system_prompt is not None:
             chain.append(ChatMessage(content = system_prompt, role = "system"))
+        if shot_messages:
+            chain.extend(shot_messages)
         chain.append(ChatMessage(message))
         final_options = ChatCompletionOptions.merge(self.chat_model_options, ChatCompletionOptions(seed = self.seed)) if self.chat_model_options else ChatCompletionOptions(seed = self.seed)
         return (await self.chat_model.chat_complete(chain, final_options)).content

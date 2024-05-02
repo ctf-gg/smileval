@@ -5,6 +5,7 @@ from litellm import aembedding
 class LiteLLMChatCompletionModel(ChatCompletionModel):
     async def chat_complete(self, messages: list[ChatMessage], options: ChatCompletionOptions = default_options) -> ChatMessage:
         super().chat_complete_log_request(messages, options)
+        messages, options = super().preprocess_inputs(messages, options)
         completions = await acompletion(model = self.name, messages = ChatMessage.to_api_format(messages))
         completion_message = completions['choices'][0]['message']
         super().chat_complete_log_response(completion_message)

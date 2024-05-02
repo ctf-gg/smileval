@@ -1,5 +1,7 @@
 from .base import Experiment, ExperimentMetadata, ExperimentContext, ExperimentOutcome, Loader
 
+from ..models import ChatMessage
+
 import random
 import csv
 import json
@@ -13,7 +15,7 @@ default_formatting = {
 }
 
 class MCQQuestionAskExperiment(Experiment):
-    def __init__(self, question: str, answer_choices: list[str], correct_answers: list[str] = [], formatting = default_formatting, points: int = 1, use_shuffle = False):
+    def __init__(self, question: str, answer_choices: list[str], correct_answers: list[str] = [], formatting = default_formatting, points: int = 1, use_shuffle = False, use_example = False):
         self.question = question
         self.answer_choices = answer_choices
         self.correct_answers = correct_answers
@@ -24,7 +26,7 @@ class MCQQuestionAskExperiment(Experiment):
         ]
         self.metadata = ExperimentMetadata(None, points)
         # give one sample interaction chain to help weaker LLMs
-        self.give_example = False
+        self.use_example = use_example
         self.shuffle = use_shuffle
         self.max_points = points
         self.formatting = formatting
@@ -41,7 +43,15 @@ class MCQQuestionAskExperiment(Experiment):
 
         system_prompt = default_formatting["presentation_selection_type"]["system"]
 
-        answer = await context.generate(prompt, system_prompt)
+        shot_messages = []
+
+        if self.use_example:
+            shot_messages.extend([
+                ChatMessage(content = self.formatting["question_answer_format"].format("Which one of these answers claims it is correct?",mcq_templates.format_choices(["Bad Answer", "Correct Answer", "Incorrect Answer", "Wrong Answer"], self.formatting["presentation_selection_type"]["choices"], self.formatting["sep"])), role = "user"),
+                ChatMessage(self.formatting["presentation_selection_type"]["choices"][1], role = "assistant")
+            ])
+
+        answer = await context.generate(prompt, system_prompt, shot_messages = shot_messages)
 
         symbols = self.formatting["presentation_selection_type"]["choices"]
 
@@ -58,7 +68,7 @@ class MCQQuestionAskExperiment(Experiment):
         return self.metadata
 
 class MCQQuestionLoader(Loader):
-    def __init__(self, input_file_path: str, formatting_config: dict = default_formatting, mode: str | None = None, skip_first_item = False, use_shuffle = False):
+    def __init__(self, input_file_path: str, formatting_config: dict = default_formatting, mode: str | None = None, skip_first_item = False, use_shuffle = False, use_example = False):
         self.input_file_path = input_file_path
         self.input_file = open(input_file_path, "r")
         self.formatting_config = formatting_config
@@ -70,6 +80,7 @@ class MCQQuestionLoader(Loader):
                 if skip_first_item:
                     _ = next(self.proxy_reader)
         self.use_shuffle = use_shuffle
+        self.use_example = use_example
 
     def __next__(self) -> Experiment:
         try:
@@ -78,7 +89,7 @@ class MCQQuestionLoader(Loader):
                 answer = line.pop()
                 question = line.pop(0)
                 answer_choices = line[:]
-                return MCQQuestionAskExperiment(question, answer_choices, correct_answers = [answer], formatting = self.formatting_config, use_shuffle = self.use_shuffle)
+                return MCQQuestionAskExperiment(question, answer_choices, correct_answers = [answer], formatting = self.formatting_config, use_shuffle = self.use_shuffle, use_example = self.use_example)
         except StopIteration:
             self.input_file.close()
             raise StopIteration()
