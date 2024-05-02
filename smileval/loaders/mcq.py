@@ -19,7 +19,7 @@ MCQ_EXAMPLE_ANSWERS = ["Pink", "Blue", "Violet", "Red"]
 MCQ_EXAMPLE_CORRECT_INDEX = 1
 
 class MCQQuestionAskExperiment(Experiment):
-    def __init__(self, question: str, answer_choices: list[str], correct_answers: list[str] = [], formatting = default_formatting, points: int = 1, use_shuffle = False, use_example = False):
+    def __init__(self, question: str, answer_choices: list[str], correct_answers: list[str] = [], formatting = default_formatting, points: int = 1, use_shuffle = False, use_example = False, use_strict = False):
         self.question = question
         self.answer_choices = answer_choices
         self.correct_answers = correct_answers
@@ -34,6 +34,7 @@ class MCQQuestionAskExperiment(Experiment):
         self.shuffle = use_shuffle
         self.max_points = points
         self.formatting = formatting
+        self.use_strict = use_strict
 
     async def execute(self, context: ExperimentContext) -> ExperimentOutcome:
         outcome = ExperimentOutcome(self.get_metadata(), context)
@@ -65,6 +66,14 @@ class MCQQuestionAskExperiment(Experiment):
                 answer_text = answer_choices[chosen_index]
                 if answer_text in self.correct_answers:
                     outcome.set_score_off_bool(True)
+        # print("Strict",self.use_strict)
+        if not self.use_strict:
+            # reverse
+            correct_symbols = [self.formatting["sep"].format(self.formatting["presentation_selection_type"]["choices"][answer_choices.index(correct_answer)], "").strip() for correct_answer in self.correct_answers]
+            # print("Correct symbols",correct_symbols)
+            for correct_symbol in correct_symbols:
+                if correct_symbol in answer:
+                    outcome.set_score_off_bool(True)
 
         return outcome
 
@@ -72,7 +81,7 @@ class MCQQuestionAskExperiment(Experiment):
         return self.metadata
 
 class MCQQuestionLoader(Loader):
-    def __init__(self, input_file_path: str, formatting_config: dict = default_formatting, mode: str | None = None, skip_first_item = False, use_shuffle = False, use_example = False):
+    def __init__(self, input_file_path: str, formatting_config: dict = default_formatting, mode: str | None = None, skip_first_item = False, use_shuffle = False, use_example = False, use_strict = False):
         self.input_file_path = input_file_path
         self.input_file = open(input_file_path, "r")
         self.formatting_config = formatting_config
@@ -85,6 +94,7 @@ class MCQQuestionLoader(Loader):
                     _ = next(self.proxy_reader)
         self.use_shuffle = use_shuffle
         self.use_example = use_example
+        self.use_strict = use_strict
 
     def __next__(self) -> Experiment:
         try:
@@ -93,7 +103,7 @@ class MCQQuestionLoader(Loader):
                 answer = line.pop()
                 question = line.pop(0)
                 answer_choices = line[:]
-                return MCQQuestionAskExperiment(question, answer_choices, correct_answers = [answer], formatting = self.formatting_config, use_shuffle = self.use_shuffle, use_example = self.use_example)
+                return MCQQuestionAskExperiment(question, answer_choices, correct_answers = [answer], formatting = self.formatting_config, use_shuffle = self.use_shuffle, use_example = self.use_example, use_strict = self.use_strict)
         except StopIteration:
             self.input_file.close()
             raise StopIteration()

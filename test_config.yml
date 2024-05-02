@@ -7,7 +7,7 @@ loader:
 model:
   class_path: smileval.models.ollama.OllamaChatCompletionModel
   init_args:
-    name: "llama3"
+    name: "phi3"
 
 seed: 69424269
 parellel: 1
@@ -15,7 +15,7 @@ options:
   class_path: smileval.models.ChatCompletionOptions
   dict_kwargs:
     use_system_prompt_workaround: false
-    stop_tokens2:
+    stop_tokens:
       - "\n"
       # phi moment
       - "<|end|>"
