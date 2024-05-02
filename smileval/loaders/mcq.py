@@ -11,7 +11,7 @@ from .templates import mcq as mcq_templates
 default_formatting = {
     "presentation_selection_type": mcq_templates.PRESENTATION_SELECTION_TYPES["capital_alphabet"],
     "question_answer_format": "{}\n{}",
-    "sep": mcq_templates.SEP_PARENTHESES
+    "sep": mcq_templates.SEP_BRACKETS
 }
 
 MCQ_EXAMPLE_QUESTION = "What color is the sky?"
@@ -74,7 +74,7 @@ class MCQQuestionAskExperiment(Experiment):
             for correct_symbol in correct_symbols:
                 if correct_symbol in answer:
                     outcome.set_score_off_bool(True)
-
+        print("Outcome", outcome.score, " score")
         return outcome
 
     def get_metadata(self) -> ExperimentMetadata:

@@ -3,11 +3,13 @@
 
 ALPHABET = list("abcdefghijklmnopqrstuvwxyz")
 CAPITAL_ALPHABET = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+FUNKY_ALPHABET =   list("WXYZABCDEFGHIJKLMNOPQRSTUV")
 NUMBERS = list(range(1, 100))
 
 SEP_DOT = "{}. {}"
 SEP_ONE_SIDED = "{}) {}"
 SEP_PARENTHESES = "({}) {}"
+SEP_BRACKETS = "[{}] {}"
 
 PRESENTATION_SELECTION_TYPES = {
     "alphabet": {
@@ -17,6 +19,10 @@ PRESENTATION_SELECTION_TYPES = {
     "capital_alphabet": {
         "system": "Answer with only the letter of the correct answer given the question.",
         "choices": CAPITAL_ALPHABET
+    },
+     "funky_capital_alphabet": {
+        "system": "Answer with only the letter of the correct answer given the question.",
+        "choices": FUNKY_ALPHABET
     },
      "numbers": {
         "system": "Answer with only the number of the correct answer given the question.",

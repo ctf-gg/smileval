@@ -6,6 +6,7 @@ from jsonargparse import ArgumentParser, ActionConfigFile
 import random
 import asyncio
 from tqdm.asyncio import tqdm_asyncio
+from tqdm import tqdm
 
 async def main():
     parser = ArgumentParser(prog="smileval", description="Smiley Evaluator for LLMs command line interface.")
@@ -60,8 +61,16 @@ async def main():
         exec_experiment(exp) for exp in experiments
     ]
 
-    a = await tqdm_asyncio.gather(*coroutines, total = total, desc = "Running experiments.")
-    results: list[ExperimentOutcome] = a
+    results: list[ExperimentOutcome] = []
+
+    if args.get("parellel") == 1:
+        print("Using serial mode.")
+        for coroutine in tqdm(coroutines, total = total, desc = "Running experiments."):
+            results.append(await coroutine)
+    else:
+        results: list[ExperimentOutcome]  = await tqdm_asyncio.gather(*coroutines, total = total, desc = "Running experiments.")
+    
+
     # print(results)
     exp_max_points = [result.exp_meta.weight for result in results]
     exp_scores = [result.score for result in results]

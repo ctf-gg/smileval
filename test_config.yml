@@ -1,13 +1,14 @@
 loader:
   class_path: smileval.loaders.mcq.MCQQuestionLoader
   init_args:
-    input_file_path: test.csv
-    use_example: true
+    input_file_path: test2.csv
+    use_example: false
+    use_shuffle: true
 
 model:
   class_path: smileval.models.ollama.OllamaChatCompletionModel
   init_args:
-    name: "phi3"
+    name: "llama3:8b-instruct-fp16"
 
 seed: 69424269
 parellel: 1
@@ -15,8 +16,9 @@ options:
   class_path: smileval.models.ChatCompletionOptions
   dict_kwargs:
     use_system_prompt_workaround: false
-    stop_tokens:
+    stop_tokens2:
       - "\n"
       # phi moment
       - "<|end|>"
       - "<|eot_id|>"
+    
