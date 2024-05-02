@@ -76,6 +76,12 @@ async def main():
     exp_scores = [result.score for result in results]
     max_possible_score = sum(exp_max_points)
     total_score = sum(exp_scores)
+    print("ID Printouts")
+    for outcome in results:
+        print(outcome.exp_meta.name)
+    print("Scoring Distribution")
+    for outcome in results:
+        print(outcome.score)
     print("Scored", total_score, " out of ", max_possible_score, " possible points.")
     print("Distribution", exp_scores)
 

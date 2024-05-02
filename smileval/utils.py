@@ -10,3 +10,7 @@ def import_class_short(fullpath):
     classname = split.pop()
     path = ".".join(split)
     return import_class(path, classname)
+
+import hashlib
+def sha256(input_string) -> str:
+    return hashlib.sha256(input_string.encode()).hexdigest()

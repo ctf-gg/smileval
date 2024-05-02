@@ -7,6 +7,7 @@ import csv
 import json
 
 from .templates import mcq as mcq_templates
+from ..utils import sha256
 
 default_formatting = {
     "presentation_selection_type": mcq_templates.PRESENTATION_SELECTION_TYPES["capital_alphabet"],
@@ -28,13 +29,30 @@ class MCQQuestionAskExperiment(Experiment):
         self.correct_indexes = [
             self.answer_choices.index(answer) for answer in correct_answers
         ]
-        self.metadata = ExperimentMetadata(None, points)
+        self.metadata = ExperimentMetadata(self.gen_id(), points)
         # give one sample interaction chain to help weaker LLMs
         self.use_example = use_example
         self.shuffle = use_shuffle
         self.max_points = points
         self.formatting = formatting
         self.use_strict = use_strict
+
+    def gen_id(self):
+        # question is not shuffled yet so we can id it
+        self.backup_answer_choices = self.answer_choices[:]
+        self.answer_choices = sorted(self.answer_choices)
+        text = self.format_question(default_formatting)
+        q_id = sha256(text)[:6]
+        self.answer_choices = self.backup_answer_choices
+        return q_id
+
+    def format_question_example(self, formatting_override = None) -> str:
+        qa_format = formatting_override if formatting_override else self.formatting
+        return qa_format["question_answer_format"].format(MCQ_EXAMPLE_QUESTION,mcq_templates.format_choices(MCQ_EXAMPLE_ANSWERS, qa_format["presentation_selection_type"]["choices"], qa_format["sep"]))
+
+    def format_question(self, formatting_override = None) -> str:
+        qa_format = formatting_override if formatting_override else self.formatting
+        return qa_format["question_answer_format"].format(self.question,mcq_templates.format_choices(self.answer_choices, qa_format["presentation_selection_type"]["choices"], qa_format["sep"]))
 
     async def execute(self, context: ExperimentContext) -> ExperimentOutcome:
         outcome = ExperimentOutcome(self.get_metadata(), context)
@@ -44,7 +62,7 @@ class MCQQuestionAskExperiment(Experiment):
         if self.shuffle:
             random.shuffle(answer_choices)
 
-        prompt = self.formatting["question_answer_format"].format(self.question,mcq_templates.format_choices(answer_choices, self.formatting["presentation_selection_type"]["choices"], self.formatting["sep"]))
+        prompt = self.format_question()
 
         system_prompt = default_formatting["presentation_selection_type"]["system"]
 
@@ -52,7 +70,7 @@ class MCQQuestionAskExperiment(Experiment):
 
         if self.use_example:
             shot_messages.extend([
-                ChatMessage(content = self.formatting["question_answer_format"].format(MCQ_EXAMPLE_QUESTION,mcq_templates.format_choices(MCQ_EXAMPLE_ANSWERS, self.formatting["presentation_selection_type"]["choices"], self.formatting["sep"])), role = "user"),
+                ChatMessage(content = self.format_question_example(), role = "user"),
                 ChatMessage(self.formatting["presentation_selection_type"]["choices"][MCQ_EXAMPLE_CORRECT_INDEX], role = "assistant")
             ])
 
