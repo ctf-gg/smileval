@@ -21,10 +21,23 @@ class ExperimentContext:
         self.default_system_prompt = prompt
         return self
 
-    async def generate(self, message: str) -> str:
+    def model_id(self) -> str:
+        return str(type(self.chat_model)) + ":" + self.chat_model.name
+
+    def summary(self):
+        summary_dict = {
+            "model": self.model_id,
+        }
+        if self.seed:
+            summary_dict["seed"] = seed
+        return summary_dict
+
+    async def generate(self, message: str, system_prompt: str | None = None) -> str:
         chain = []
-        if self.default_system_prompt is not None:
+        if self.default_system_prompt is not None and not system_prompt:
             chain.append(ChatMessage(content = self.default_system_prompt, role = "system"))
+        elif system_prompt is not None:
+            chain.append(ChatMessage(content = system_prompt, role = "system"))
         chain.append(ChatMessage(message))
         return (await self.chat_model.chat_complete(chain, self.chat_model_options))["content"]
 
@@ -36,19 +49,47 @@ class ExperimentMetadata:
             self.name: str | None = None
 
         self.weight: int = weight
-        self.tags = []
+        self.tags = ["default"]
 
     def add_tag(self, tag: str):
         self.tags.append(tag)
         return self
 
+    def has_tag(self, tag: str) -> bool:
+        return tag in self.tags
 # the end goal is to be able to have a generated html webpage by tag
 
+class ExperimentOutcome:
+    def __init__(self, experiment_meta: ExperimentMetadata, context: ExperimentContext):
+        self.exp_meta: ExperimentMetadata = experiment_meta
+        self.score = 0
+        self.context: ExperimentContext = context
+
+    def set_score(self, new_score: int):
+        self.score = new_score
+        return self
+
+    def set_score_off_bool(self, status: bool):
+        self.score = self.exp_meta.weight if status else 0
+        return self
 
 class Experiment:
-    def execute(self, context: ExperimentContext):
-        pass
+    def execute(self, context: ExperimentContext) -> ExperimentOutcome:
+        return ExperimentOutcome()
+
+    def get_metadata(self) -> ExperimentMetadata:
+        raise NotImplemented()
 
 # generator of experiments
 class Loader:
-    pass
+    # async variant in the future?
+    def __next__(self) -> Experiment:
+        raise StopIteration()
+
+    # autoresume can be implemented using this
+    def is_determinisitc(self) -> bool:
+        return False
+
+    # return -1 if unknown
+    def num_experiments(self) -> int:
+        return 0
