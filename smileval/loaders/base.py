@@ -75,7 +75,8 @@ class ExperimentOutcome:
 
 class Experiment:
     def execute(self, context: ExperimentContext) -> ExperimentOutcome:
-        return ExperimentOutcome()
+        # TODO: raise warning when this is called cause you are supposed to overwrite
+        return ExperimentOutcome(self.get_metadata(), context)
 
     def get_metadata(self) -> ExperimentMetadata:
         raise NotImplemented()
