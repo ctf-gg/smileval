@@ -9,6 +9,7 @@ class ChatMessage:
 
     def mark_as_generated(self):
         self.is_generated = True
+        return self # allow chaining
 
     def as_dict(self):
         return {
@@ -84,7 +85,7 @@ class ChatCompletionModel:
 
     # apparently in python coroutine return type is implied unlike js typings
     # TODO: what if you have multiple completions? prob low priority
-    async def chat_complete(messages: list[ChatMessage], options: ChatCompletionOptions) ->  ChatMessage:
+    async def chat_complete(self, messages: list[ChatMessage], options: ChatCompletionOptions) ->  ChatMessage:
         raise NotImplementedError("chat_complete needs to be implemented for " + str(self))
 class EmbeddingModel:
     def __init__(self, name: str):
