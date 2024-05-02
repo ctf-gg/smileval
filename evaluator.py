@@ -16,7 +16,7 @@ async def main():
     parser.add_argument("--loader", type = Loader)
     parser.add_argument("--model", type = ChatCompletionModel)
     parser.add_argument("--options", type = ChatCompletionOptions)
-    parser.add_argument("--parellel", type = int, default = 2, help="Max parellel async experiments to run. You may want to set this to 1 if you don't have a batching endpoint.")
+    parser.add_argument("--parellel", type = int, default = 1, help="Max parellel async experiments to run. You may want to set this to 1 if you don't have a batching endpoint.")
     parser.add_argument("--model-name", type = str, default = None, help="Quickly specify chat model name to test using env variables to guess.")
     parser.add_argument("--run-name", type = str, default = None, help="Nickname the run.")
 
