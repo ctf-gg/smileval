@@ -14,6 +14,10 @@ default_formatting = {
     "sep": mcq_templates.SEP_PARENTHESES
 }
 
+MCQ_EXAMPLE_QUESTION = "What color is the sky?"
+MCQ_EXAMPLE_ANSWERS = ["Pink", "Blue", "Violet", "Red"]
+MCQ_EXAMPLE_CORRECT_INDEX = 1
+
 class MCQQuestionAskExperiment(Experiment):
     def __init__(self, question: str, answer_choices: list[str], correct_answers: list[str] = [], formatting = default_formatting, points: int = 1, use_shuffle = False, use_example = False):
         self.question = question
@@ -47,8 +51,8 @@ class MCQQuestionAskExperiment(Experiment):
 
         if self.use_example:
             shot_messages.extend([
-                ChatMessage(content = self.formatting["question_answer_format"].format("Which one of these answers claims it is correct?",mcq_templates.format_choices(["Bad Answer", "Correct Answer", "Incorrect Answer", "Wrong Answer"], self.formatting["presentation_selection_type"]["choices"], self.formatting["sep"])), role = "user"),
-                ChatMessage(self.formatting["presentation_selection_type"]["choices"][1], role = "assistant")
+                ChatMessage(content = self.formatting["question_answer_format"].format(MCQ_EXAMPLE_QUESTION,mcq_templates.format_choices(MCQ_EXAMPLE_ANSWERS, self.formatting["presentation_selection_type"]["choices"], self.formatting["sep"])), role = "user"),
+                ChatMessage(self.formatting["presentation_selection_type"]["choices"][MCQ_EXAMPLE_CORRECT_INDEX], role = "assistant")
             ])
 
         answer = await context.generate(prompt, system_prompt, shot_messages = shot_messages)
