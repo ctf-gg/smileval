@@ -12,7 +12,7 @@ SEP_PARENTHESES = "({}) {}"
 SEP_BRACKETS = "[{}] {}"
 
 # improved prompt someone else wrote, just here for testing
-EXTRA_TEST = '''Answer the following question. Wrap your answer choice in brackets.
+EXTRA_TEST = '''Answer the following question with justification. Mention your final answer choice in brackets at the end of your response.
 
 Current date: 2024-05-02'''
 

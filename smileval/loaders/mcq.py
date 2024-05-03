@@ -40,12 +40,9 @@ class MCQQuestionAskExperiment(Experiment):
 
     def gen_id(self):
         # question is not shuffled yet so we can id it
-        self.backup_answer_choices = self.answer_choices[:]
-        self.answer_choices = sorted(self.answer_choices[:])
-        text = self.format_question(default_formatting)
+        text = self.format_question(formatting_override = default_formatting, answer_choices = list(sorted(self.answer_choices[:])))
         q_id = sha256(text)[:6]
         # print("backup",self.backup_answer_choices, self.answer_choices)
-        self.answer_choices = self.backup_answer_choices[:]
         return q_id
 
     def format_question_example(self, formatting_override = None) -> str:

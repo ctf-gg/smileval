@@ -1,14 +1,14 @@
 loader:
   class_path: smileval.loaders.mcq.MCQQuestionLoader
   init_args:
-    input_file_path: test4.csv
+    input_file_path: test5.csv
     use_example: false
     use_shuffle: true
 
 model:
   class_path: smileval.models.ollama.OllamaChatCompletionModel
   init_args:
-    name: "llama3:8b-instruct-fp16" # :8b-instruct-fp16
+    name: "phi3" # :8b-instruct-fp16
 
 seed: 69424269
 parellel: 1
