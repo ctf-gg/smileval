@@ -24,7 +24,7 @@ options:
   dict_kwargs:
     use_system_prompt_workaround: false
     max_tokens: 1024
-    mirostat: 2
+    # mirostat: 2
     stop_tokens_2:
       - "\n"
       # phi moment
