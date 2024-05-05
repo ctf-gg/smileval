@@ -16,7 +16,7 @@ async def main():
     parser.add_argument("--loader", type = Loader)
     parser.add_argument("--model", type = ChatCompletionModel)
     parser.add_argument("--options", type = ChatCompletionOptions)
-    parser.add_argument("--parellel", type = int, default = 1, help="Max parellel async experiments to run. You may want to set this to 1 if you don't have a batching endpoint.")
+    parser.add_argument("--parallel", type = int, default = 1, help="Max parallel async experiments to run. You may want to set this to 1 if you don't have a batching endpoint.")
     parser.add_argument("--model-name", type = str, default = None, help="Quickly specify chat model name to test using env variables to guess.")
     parser.add_argument("--run-name", type = str, default = None, help="Nickname the run.")
 
@@ -38,6 +38,8 @@ async def main():
     if args.get("options"):
         context.chat_model_options = init_args.get("options")
 
+    parallel = args.get("parallel")
+
     # TODO: move this into the module perhaps
     index = -1
     if loader.is_determinisitic():
@@ -47,7 +49,7 @@ async def main():
     # for now?
 
     experiments: list[Experiment] = list(loader)
-    semaphore = asyncio.Semaphore(args.get("parellel"))
+    semaphore = asyncio.Semaphore(parallel)
     total = len(experiments)
 
     async def exec_experiment(exp: Experiment) -> ExperimentOutcome:
@@ -63,12 +65,16 @@ async def main():
 
     results: list[ExperimentOutcome] = []
 
-    if args.get("parellel") == 1:
+    if parallel == 1:
         print("Using serial mode.")
-        for coroutine in tqdm(coroutines, total = total, desc = "Running experiments."):
+        tqdmer = tqdm(coroutines, total = total, desc = "Running experiments in serial mode.")
+        for coroutine in tqdmer:
             results.append(await coroutine)
+            exp_max_score = sum([result.exp_meta.weight for result in results])
+            exp_total_score = sum([result.score for result in results])
+            tqdmer.set_description(f"Experiments Serial Mode: Cur results {exp_total_score}/{exp_max_score}")
     else:
-        results: list[ExperimentOutcome]  = await tqdm_asyncio.gather(*coroutines, total = total, desc = "Running experiments.")
+        results: list[ExperimentOutcome]  = await tqdm_asyncio.gather(*coroutines, total = total, desc = "Running experiments in batches of " + str(parallel))
     
 
     # print(results)

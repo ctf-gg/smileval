@@ -6,12 +6,16 @@ loader:
     use_shuffle: true
 
 model:
-  class_path: smileval.models.ollama.OllamaChatCompletionModel
+#  class_path: smileval.models.ollama.OllamaChatCompletionModel
+  class_path: smileval.models.openai.OpenAIChatCompletionModel
   init_args:
-    name: "phi3" # :8b-instruct-fp16
+    name: "na" # :8b-instruct-fp16
+    # ensures we don't artifically run out of context
+    spoof_api_name: "gpt-4-32k"
+    api_key: "sk-example"
 
 seed: 69424269
-parellel: 1
+parallel: 1
 options:
   class_path: smileval.models.ChatCompletionOptions
   dict_kwargs:
@@ -21,4 +25,6 @@ options:
       # phi moment
       - "<|end|>"
       - "<|eot_id|>"
-    
+    # command R broken in llama.cpp moment
+    stop_tokens:
+      - "<|im_end|>"
