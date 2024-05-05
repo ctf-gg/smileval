@@ -90,11 +90,15 @@ class ChatCompletionOptions:
         self.temperature: float | None = None
         self.top_p: float | None = None
         self.top_k: int | None = None
+        self.min_p: int | None = None
         self.instruction_template: str | None = None
         self.seed: int | None = seed
         self.use_system_prompt_workaround = None
         self.stop_tokens = None
         self.max_tokens: int | None = None
+        self.mirostat: int | None = None
+        self.mirostat_tau: float | None = None
+        self.mirostat_eta: float | None = None
         # bad hack ig
         self.__dict__.update(kwargs)
 

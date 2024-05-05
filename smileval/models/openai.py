@@ -37,7 +37,15 @@ class OpenAIChatCompletionModel(ChatCompletionModel):
         map_attribute(options, openai_kwargs, "max_tokens", "max_tokens")
         extra_args = {}
         if self.is_extended:
+            # Mirostat
             map_attribute(options, extra_args, "mirostat", "mirostat")
+            map_attribute(options, extra_args, "mirostat_eta", "mirostat_eta")
+            map_attribute(options, extra_args, "mirostat_tau", "mirostat_tau")
+            # Alt names
+            map_attribute(options, extra_args, "max_tokens", "n_predict")
+            # sampling
+            map_attribute(options, extra_args, "top_k", "top_k")
+            map_attribute(options, extra_args, "min_p", "min_p")
         completions = await self.client.chat.completions.create(messages = ChatMessage.to_api_format(messages), model = self.model_name,extra_body = extra_args, **openai_kwargs)
         # types get funky here for some reason
         completion_message = ChatMessage(completions.choices[0].message.content, role = completions.choices[0].message.role).mark_as_generated()

@@ -13,6 +13,7 @@ model:
     # ensures we don't artifically run out of context
     spoof_api_name: "gpt-4-32k"
     api_key: "sk-example"
+    extended: true
 
 seed: 69424269
 parallel: 1
@@ -21,6 +22,7 @@ options:
   dict_kwargs:
     use_system_prompt_workaround: false
     max_tokens: 1024
+    mirostat: 1
     stop_tokens_2:
       - "\n"
       # phi moment
