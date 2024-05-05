@@ -94,6 +94,7 @@ class ChatCompletionOptions:
         self.seed: int | None = seed
         self.use_system_prompt_workaround = None
         self.stop_tokens = None
+        self.max_tokens: int | None = None
         # bad hack ig
         self.__dict__.update(kwargs)
 

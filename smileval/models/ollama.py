@@ -25,6 +25,7 @@ class OllamaChatCompletionModel(ChatCompletionModel):
         map_attribute(options, ollama_options, "temperature", "temperature")
         map_attribute(options, ollama_options, "stop_tokens", "stop")
         map_attribute(options, ollama_options, "seed", "seed")
+        map_attribute(options, ollama_options, "max_tokens", "num_predict")
         completion = await self.client.chat(model = self.name, messages = ChatMessage.to_api_format(messages), options = ollama_options)
         super().chat_complete_log_response(completion['message'])
         return ChatMessage.from_dict(completion['message']).mark_as_generated()

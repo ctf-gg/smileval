@@ -20,6 +20,7 @@ options:
   class_path: smileval.models.ChatCompletionOptions
   dict_kwargs:
     use_system_prompt_workaround: false
+    max_tokens: 1024
     stop_tokens_2:
       - "\n"
       # phi moment

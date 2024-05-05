@@ -33,6 +33,7 @@ class OpenAIChatCompletionModel(ChatCompletionModel):
         map_attribute(options, openai_kwargs, "top_p", "top_p")
         map_attribute(options, openai_kwargs, "stop_tokens", "stop")
         map_attribute(options, openai_kwargs, "seed", "seed") # important
+        map_attribute(options, openai_kwargs, "max_tokens", "max_tokens") 
         completions = await self.client.chat.completions.create(messages = ChatMessage.to_api_format(messages), model = self.model_name, **openai_kwargs)
         # types get funky here for some reason
         completion_message = ChatMessage(completions.choices[0].message.content, role = completions.choices[0].message.role).mark_as_generated()
