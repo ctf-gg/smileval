@@ -5,13 +5,13 @@ import os
 import openai
 
 class OpenAIChatCompletionModel(ChatCompletionModel):
-    def __init__(self, name: str, api_key: str | None = "sk-placeholder", host: str | None = None, spoof_api_name: str | None = None, extended = False):
+    def __init__(self, name: str, api_key: str | None = "sk-placeholder", base_url: str | None = None, spoof_api_name: str | None = None, extended = False):
         super().__init__(name)
         opts = {}
         if os.getenv("OPENAI_BASE_URL"):
             opts["base_url"] = os.getenv("OPENAI_BASE_URL")
-        if host:
-            opts["base_url"] = host
+        if base_url:
+            opts["base_url"] = base_url
 
 
         if os.getenv("OPENAI_API_KEY"):

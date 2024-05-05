@@ -9,25 +9,27 @@ model:
 #  class_path: smileval.models.ollama.OllamaChatCompletionModel
   class_path: smileval.models.openai.OpenAIChatCompletionModel
   init_args:
-    name: "na" # :8b-instruct-fp16
+    name: "openchat/openchat-7b:free" # :8b-instruct-fp16
     # ensures we don't artifically run out of context
-    spoof_api_name: "gpt-4-32k"
+    # spoof_api_name: "gpt-4-32k"
     api_key: "sk-example"
-    extended: true
+    extended: false
+    # base_url: "https://openrouter.ai/api/v1"
 
 seed: 69424269
 parallel: 1
+sleep: 0
 options:
   class_path: smileval.models.ChatCompletionOptions
   dict_kwargs:
     use_system_prompt_workaround: false
     max_tokens: 1024
-    mirostat: 1
+    mirostat: 2
     stop_tokens_2:
       - "\n"
       # phi moment
       - "<|end|>"
       - "<|eot_id|>"
     # command R broken in llama.cpp moment
-    stop_tokens:
-      - "<|im_end|>"
+    #stop_tokens:
+    #  - "<|im_end|>"

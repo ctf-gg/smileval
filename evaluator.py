@@ -8,6 +8,8 @@ import asyncio
 from tqdm.asyncio import tqdm_asyncio
 from tqdm import tqdm
 
+import time
+
 async def main():
     parser = ArgumentParser(prog="smileval", description="Smiley Evaluator for LLMs command line interface.")
     parser.add_argument("--config", action=ActionConfigFile) 
@@ -16,6 +18,7 @@ async def main():
     parser.add_argument("--loader", type = Loader)
     parser.add_argument("--model", type = ChatCompletionModel)
     parser.add_argument("--options", type = ChatCompletionOptions)
+    parser.add_argument("--sleep", type = float, default = 0, help="Sleep this long per experiment in serial mode for OpenRouter ratelimits.")
     parser.add_argument("--parallel", type = int, default = 1, help="Max parallel async experiments to run. You may want to set this to 1 if you don't have a batching endpoint.")
     parser.add_argument("--model-name", type = str, default = None, help="Quickly specify chat model name to test using env variables to guess.")
     parser.add_argument("--run-name", type = str, default = None, help="Nickname the run.")
@@ -28,6 +31,8 @@ async def main():
     chat_model: ChatCompletionModel = init_args.get("model")
 
     context = ExperimentContext(chat_model)
+
+    sleep_time = args.get("sleep")
 
     if args.get("seed"):
         seed = args.get("seed")
@@ -73,6 +78,8 @@ async def main():
             exp_max_score = sum([result.exp_meta.weight for result in results])
             exp_total_score = sum([result.score for result in results])
             tqdmer.set_description(f"Experiments Serial Mode: Cur results {exp_total_score}/{exp_max_score}")
+            if sleep_time > 0:
+                time.sleep(sleep_time)
     else:
         results: list[ExperimentOutcome]  = await tqdm_asyncio.gather(*coroutines, total = total, desc = "Running experiments in batches of " + str(parallel))
     
