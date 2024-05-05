@@ -5,7 +5,7 @@ import os
 import openai
 
 class OpenAIChatCompletionModel(ChatCompletionModel):
-    def __init__(self, name: str, api_key: str | None = "sk-placeholder", host: str | None = None, spoof_api_name: str | None = None):
+    def __init__(self, name: str, api_key: str | None = "sk-placeholder", host: str | None = None, spoof_api_name: str | None = None, is_extended = False):
         super().__init__(name)
         opts = {}
         if os.getenv("OPENAI_BASE_URL"):
@@ -24,6 +24,7 @@ class OpenAIChatCompletionModel(ChatCompletionModel):
         self.model_name = name
         if spoof_api_name:
             self.model_name = spoof_api_name
+        self.is_extended: bool = is_extended
 
     async def chat_complete(self, messages: list[ChatMessage], options: ChatCompletionOptions = default_options) -> ChatMessage:
         super().chat_complete_log_request(messages, options)
@@ -33,8 +34,11 @@ class OpenAIChatCompletionModel(ChatCompletionModel):
         map_attribute(options, openai_kwargs, "top_p", "top_p")
         map_attribute(options, openai_kwargs, "stop_tokens", "stop")
         map_attribute(options, openai_kwargs, "seed", "seed") # important
-        map_attribute(options, openai_kwargs, "max_tokens", "max_tokens") 
-        completions = await self.client.chat.completions.create(messages = ChatMessage.to_api_format(messages), model = self.model_name, **openai_kwargs)
+        map_attribute(options, openai_kwargs, "max_tokens", "max_tokens")
+        extra_args = {}
+        if self.is_extended:
+            map_attribute(options, extra_args, "mirostat", "mirostat")
+        completions = await self.client.chat.completions.create(messages = ChatMessage.to_api_format(messages), model = self.model_name,extra_body = extra_args, **openai_kwargs)
         # types get funky here for some reason
         completion_message = ChatMessage(completions.choices[0].message.content, role = completions.choices[0].message.role).mark_as_generated()
         super().chat_complete_log_response(completion_message.content)
