@@ -5,7 +5,7 @@ import os
 import openai
 
 class OpenAIChatCompletionModel(ChatCompletionModel):
-    def __init__(self, name: str, api_key: str | None = "sk-placeholder", host: str | None = None, spoof_api_name: str | None = None, is_extended = False):
+    def __init__(self, name: str, api_key: str | None = "sk-placeholder", host: str | None = None, spoof_api_name: str | None = None, extended = False):
         super().__init__(name)
         opts = {}
         if os.getenv("OPENAI_BASE_URL"):
@@ -24,7 +24,7 @@ class OpenAIChatCompletionModel(ChatCompletionModel):
         self.model_name = name
         if spoof_api_name:
             self.model_name = spoof_api_name
-        self.is_extended: bool = is_extended
+        self.is_extended: bool = extended
 
     async def chat_complete(self, messages: list[ChatMessage], options: ChatCompletionOptions = default_options) -> ChatMessage:
         super().chat_complete_log_request(messages, options)
