@@ -1,0 +1,31 @@
+loader:
+  class_path: smileval.loaders.mcq.MCQQuestionLoader
+  init_args:
+    input_file_path: test5.csv
+    use_example: false
+    use_shuffle: true
+
+model:
+#  class_path: smileval.models.ollama.OllamaChatCompletionModel
+  class_path: smileval.models.google.GoogleGenAIChatCompletionModel
+  init_args:
+  # 1.0 is a hell lot more affordable and doesn't have 50req/day 2req/min thing
+    name: "gemini-1.5-pro-latest" # :8b-instruct-fp16
+    # we can use env variable instead
+    # api_key: "sk-example"
+    # base_url: "https://openrouter.ai/api/v1"
+    # it sometimes false flags, like for some reason math question
+    safety: false
+
+seed: 69424269
+parallel: 1
+# gemini 1.5 pro moment
+sleep: 30
+options:
+  class_path: smileval.models.ChatCompletionOptions
+  dict_kwargs:
+    use_system_prompt_workaround: false
+    max_tokens: 1024
+    # command R broken in llama.cpp moment
+    #stop_tokens:
+    #  - "<|im_end|>"

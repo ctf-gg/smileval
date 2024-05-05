@@ -5,7 +5,7 @@ import os
 import openai
 
 class OpenAIChatCompletionModel(ChatCompletionModel):
-    def __init__(self, name: str, api_key: str | None = "sk-placeholder", base_url: str | None = None, spoof_api_name: str | None = None, extended = False):
+    def __init__(self, name: str, api_key: str | None = None, base_url: str | None = None, spoof_api_name: str | None = None, extended = False):
         super().__init__(name)
         opts = {}
         if os.getenv("OPENAI_BASE_URL"):
