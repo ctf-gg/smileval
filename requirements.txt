@@ -1,2 +1,4 @@
 jsonargparse
 tqdm
+requests
+jinja2

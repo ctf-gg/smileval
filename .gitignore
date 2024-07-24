@@ -167,3 +167,5 @@ eval_outputs
 test_script.sh
 test2.csv
 test*.csv
+
+experiments/

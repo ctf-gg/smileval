@@ -6,16 +6,24 @@ loader:
     use_shuffle: true
 
 model:
-#  class_path: smileval.models.ollama.OllamaChatCompletionModel
+  # class_path: smileval.models.ollama.OllamaChatCompletionModel
   class_path: smileval.models.openai.OpenAIChatCompletionModel
+  # class_path: smileval.models.openai.OpenAITextCompletionModel
   init_args:
-    name: "openchat/openchat-7b:free" # :8b-instruct-fp16
+    # name: "phi3:3.8b-mini-instruct-4k-fp16" #"doesntmatterforllamacppserver"
+    name: "doesntmatterforllamacppserver"
+    tokenizer: https://huggingface.co/microsoft/Phi-3-medium-128k-instruct/blob/main/tokenizer_config.json
+    # name: "openchat/openchat-7b:free" # :8b-instruct-fp16
     # ensures we don't artifically run out of context
     # spoof_api_name: "gpt-4-32k"
-    api_key: "sk-example"
-    extended: false
+    # you may find this useful to comment out to use env variables
+    #  api_key: sk-example
+    # use this if non-openai st andard api json body parameters are supported in the POST request, (hint: llama.cpp or ollama)
+    extended: true
     # base_url: "https://openrouter.ai/api/v1"
 
+namespace: mcq_v5
+id: glhf_dot_chat_llama405b
 seed: 69424269
 parallel: 1
 sleep: 0
@@ -23,13 +31,14 @@ options:
   class_path: smileval.models.ChatCompletionOptions
   dict_kwargs:
     use_system_prompt_workaround: false
-    max_tokens: 1024
+    max_tokens: 1024 # too much model yapping is also bad
     # mirostat: 2
-    stop_tokens_2:
-      - "\n"
+    #stop_tokens:
+     # - "\n"
       # phi moment
-      - "<|end|>"
-      - "<|eot_id|>"
+    #  - "<|end|>"
+    #  - "<|eot_id|>"
     # command R broken in llama.cpp moment
+    # also yi be like
     #stop_tokens:
     #  - "<|im_end|>"

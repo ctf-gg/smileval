@@ -1,5 +1,6 @@
 from smileval.loaders import Loader, Experiment, ExperimentOutcome, ExperimentContext
 from smileval.models import ChatCompletionModel, ChatCompletionOptions
+from smileval.sessions import initalize_session_persistence
 
 from jsonargparse import ArgumentParser, ActionConfigFile
 
@@ -10,10 +11,14 @@ from tqdm import tqdm
 
 import time
 
+import os
+
 async def main():
     parser = ArgumentParser(prog="smileval", description="Smiley Evaluator for LLMs command line interface.")
     parser.add_argument("--config", action=ActionConfigFile) 
     parser.add_argument("--seed", type = int, default = None, help="Seed used to make things reproducible.")
+    parser.add_argument("--namespace", type = str, default = "default", help="experiments labeled with the same namespace will be included in the same report.")
+    parser.add_argument("--id", type = str, help = "ID to refer to the experiment with. Must be unique and will overwrite previous experiment with same id.")
     # parser.add_class_arguments(Loader, "loader")
     parser.add_argument("--loader", type = Loader)
     parser.add_argument("--model", type = ChatCompletionModel)
@@ -31,6 +36,8 @@ async def main():
     chat_model: ChatCompletionModel = init_args.get("model")
 
     context = ExperimentContext(chat_model)
+
+    initalize_session_persistence()
 
     sleep_time = args.get("sleep")
 
