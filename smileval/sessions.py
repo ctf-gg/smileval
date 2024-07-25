@@ -28,9 +28,14 @@ class SessionFilesystemStorage(SessionStorage):
         self.ensure_namespace_setup(namespace)
         self.ensure_session_setup(namespace, sid)
         with open(self.experiments_path / namespace / f"{sid}.session.json", "w") as f:
-            json.dump(f, [
-                outcome.serialize() for outcome in outcomes
-            ])
+            json.dump(f, {
+                "namespace": namespace,
+                "id": sid,
+                "outcomes": [
+                    outcome.serialize() for outcome in outcomes
+                ],
+                "version": 1
+            })
 
 def initalize_session_persistence(directory = None) -> SessionFilesystemStorage:
     if not directory:

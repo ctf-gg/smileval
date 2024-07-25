@@ -77,7 +77,8 @@ class ExperimentOutcome:
             "score": self.score,
             "weight": self.exp_meta.weight,
             "tags": self.exp_meta.tags,
-            "name": self.exp_meta.name
+            "name": self.exp_meta.name,
+            "id": self.exp_meta.name
         }
 
     def set_score_off_bool(self, status: bool):
