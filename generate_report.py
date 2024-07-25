@@ -41,16 +41,24 @@ def main():
                 if not exp_id in seen_exp_ids:
                     seen_exp_ids.add(exp_id)
                     exp_ids.append(exp_id)
+            # put total as key as well
+            session_kv[sid]["total"]  = total
     output_csv_file_path = os.path.join(sessions_path, "report.csv")
     with open(output_csv_file_path, "w") as f:
         writer = csv.DictWriter(f, fieldnames = ["Experiment or Metric"] + list(session_ids))
         writer.writeheader()
-        row = {
-            "Experiment or Metric": exp_id
-        }
-        for sid in session_ids:
-
-
+        
+        keys_to_write = exp_ids[:]
+        # TODO: inject tags
+        keys_to_write.append("total")
+        for key in keys_to_write:
+            row = {
+                "Experiment or Metric": key
+            }
+            for sid in session_ids:
+                row[key] = session_kv[sid][key]
+            writer.writerow(row)
+    print("Done!")
 
 if __name__ == "__main__":
     main()
