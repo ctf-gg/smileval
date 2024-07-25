@@ -27,7 +27,7 @@ class SessionFilesystemStorage(SessionStorage):
     def write_session_outcome(self, namespace: str, sid: str, outcomes: list[ExperimentOutcome]):
         self.ensure_namespace_setup(namespace)
         self.ensure_session_setup(namespace, sid)
-        with open(self.experiments_path / namespace / sid, "w") as f:
+        with open(self.experiments_path / namespace / f"{sid}.session.json", "w") as f:
             json.dump(f, [
                 outcome.serialize() for outcome in outcomes
             ])
