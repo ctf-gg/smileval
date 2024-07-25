@@ -72,6 +72,14 @@ class ExperimentOutcome:
         self.score = new_score
         return self
 
+    def serialize(self):
+        return {
+            "score": self.score,
+            "weight": self.exp_meta.weight,
+            "tags": self.exp_meta.tags,
+            "name": self.exp_meta.name
+        }
+
     def set_score_off_bool(self, status: bool):
         self.score = self.exp_meta.weight if status else 0
         return self

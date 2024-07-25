@@ -37,8 +37,10 @@ async def main():
 
     context = ExperimentContext(chat_model)
 
-    initalize_session_persistence()
+    storage = initalize_session_persistence()
 
+    namespace = args.get("namespace")
+    sid = args.get("id")
     sleep_time = args.get("sleep")
 
     if args.get("seed"):
@@ -104,6 +106,8 @@ async def main():
         print(outcome.score)
     print("Scored", total_score, " out of ", max_possible_score, " possible points.")
     print("Distribution", exp_scores)
+    storage.write_session_outcome(namespace, sid, outcomes)
+    print("Saved session results")
 
 if __name__ == "__main__":
     asyncio.run(main())
