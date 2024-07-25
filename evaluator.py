@@ -106,7 +106,7 @@ async def main():
         print(outcome.score)
     print("Scored", total_score, " out of ", max_possible_score, " possible points.")
     print("Distribution", exp_scores)
-    storage.write_session_outcome(namespace, sid, outcomes)
+    storage.write_session_outcome(namespace, sid, results)
     print("Saved session results")
 
 if __name__ == "__main__":

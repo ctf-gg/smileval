@@ -85,6 +85,10 @@ class ExperimentOutcome:
         self.score = self.exp_meta.weight if status else 0
         return self
 
+    def reset_score(self):
+        self.score = 0
+        return self
+
 class Experiment:
     async def execute(self, context: ExperimentContext) -> ExperimentOutcome:
         # TODO: raise warning when this is called cause you are supposed to overwrite

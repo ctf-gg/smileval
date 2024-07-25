@@ -9,8 +9,9 @@ import asyncio
 from ..utils import map_attribute
 
 class OllamaChatCompletionModel(ChatCompletionModel):
-    def __init__(self, name: str, host: str | None = None):
+    def __init__(self, name: str, host: str | None = None, extended = False):
         super().__init__(name)
+        self.extended = extended
         opts = {}
         if os.getenv("OLLAMA_HOST"):
             opts["host"] = os.getenv("OLLAMA_HOST")

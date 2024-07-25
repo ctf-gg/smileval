@@ -20,7 +20,7 @@ MCQ_EXAMPLE_ANSWERS = ["Pink", "Blue", "Violet", "Red"]
 MCQ_EXAMPLE_CORRECT_INDEX = 1
 
 class MCQQuestionAskExperiment(Experiment):
-    def __init__(self, question: str, answer_choices: list[str], correct_answers: list[str] = [], formatting = default_formatting, points: int = 1, use_shuffle = False, use_example = False, use_strict = False):
+    def __init__(self, question: str, answer_choices: list[str], correct_answers: list[str] = [], formatting = default_formatting, points: int = 1, use_shuffle = False, use_example = False, penalize_multiple = False, use_strict = False):
         super().__init__()
         self.question = question
         self.answer_choices = answer_choices
@@ -37,6 +37,7 @@ class MCQQuestionAskExperiment(Experiment):
         self.shuffle = use_shuffle
         self.max_points = points
         self.use_strict = use_strict
+        self.penalize_multiple = penalize_multiple
 
     def gen_id(self):
         # question is not shuffled yet so we can id it
@@ -93,6 +94,14 @@ class MCQQuestionAskExperiment(Experiment):
             for correct_symbol in correct_symbols:
                 if correct_symbol in answer:
                     outcome.set_score_off_bool(True)
+
+        if self.penalize_multiple:
+            incorrect_answers = list(filter(lambda answer: answer not in self.correct_answers,self.answer_choices))
+            incorrect_symbols = [self.formatting["sep"].format(self.formatting["presentation_selection_type"]["choices"][answer_choices.index(incorrect_answer)], "").strip() for incorrect_answer in incorrect_answers]
+            for incorrect_symbol in incorrect_symbols:
+                if incorrect_symbol in answer:
+                    outcome.reset_score()
+                    break
         print("Outcome", outcome.score, " score")
         return outcome
 
