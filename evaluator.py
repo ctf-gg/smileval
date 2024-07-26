@@ -84,6 +84,8 @@ async def main():
         tqdmer = tqdm(coroutines, total = total, desc = "Running experiments in serial mode.")
         for coroutine in tqdmer:
             results.append(await coroutine)
+            # save in case crash
+            storage.write_session_outcome(namespace, sid, results)
             exp_max_score = sum([result.exp_meta.weight for result in results])
             exp_total_score = sum([result.score for result in results])
             tqdmer.set_description(f"Experiments Serial Mode: Cur results {exp_total_score}/{exp_max_score}")

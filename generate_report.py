@@ -35,7 +35,7 @@ def main():
             total = 0
             for outcome in serialized_outcomes:
                 exp_id = outcome["name"]
-                session_kv[sid][exp_id] = outcome
+                session_kv[sid][exp_id] = outcome["score"]
                 total += outcome["score"]
                 # TODO: tag counting?    
                 if not exp_id in seen_exp_ids:
@@ -56,7 +56,7 @@ def main():
                 "Experiment or Metric": key
             }
             for sid in session_ids:
-                row[key] = session_kv[sid][key]
+                row[sid] = session_kv[sid][key]
             writer.writerow(row)
     print("Done!")
 
