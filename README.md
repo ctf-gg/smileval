@@ -1,5 +1,7 @@
 # smileval
 funny evaluator for llms, possibly crossplatform.
+![image](https://github.com/user-attachments/assets/47a832b1-7750-4172-a6bb-ac97a2470237)
+
 ## usage
 A test config is included as an example.
 ```bash
