@@ -73,7 +73,7 @@ class GoogleGenAIChatCompletionModel(ChatCompletionModel):
         map_attribute(options, generation_config_kwargs, "top_k", "top_k")
 
         system_message, chat_messages = GoogleGenAIChatCompletionModel.map_to_google_format(messages)
-
+        
         if not self.safety:
             # generate_content_kwargs["safety_settings"] = SAFETY_SETTINGS_NETURALIZATION
             generation_config_kwargs["safety_settings"] = [
