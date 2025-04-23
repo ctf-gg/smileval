@@ -10,7 +10,7 @@ model:
   class_path: smileval.models.google.GoogleGenAIChatCompletionModel
   init_args:
   # 1.0 is a hell lot more affordable and doesn't have 50req/day 2req/min thing
-    name: "gemini-1.5-pro-latest" # :8b-instruct-fp16
+    name: "gemini-2.5-pro-exp-03-25" # :8b-instruct-fp16
     # we can use env variable instead
     # api_key: "sk-example"
     # base_url: "https://openrouter.ai/api/v1"
@@ -19,8 +19,12 @@ model:
 
 seed: 69424269
 parallel: 1
-# gemini 1.5 pro moment
-sleep: 30
+# google free limits moment
+# 5 RPM -> 12s per request
+sleep: 12
+namespace: mcq_v5
+id: google-gemini-2.5.pro-exp-03-25
+
 options:
   class_path: smileval.models.ChatCompletionOptions
   dict_kwargs:

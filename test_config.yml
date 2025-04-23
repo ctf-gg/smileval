@@ -6,13 +6,14 @@ loader:
     use_shuffle: true
 
 model:
-  # class_path: smileval.models.ollama.OllamaChatCompletionModel
-  class_path: smileval.models.openai.OpenAIChatCompletionModel
+  class_path: smileval.models.ollama.OllamaChatCompletionModel
+  # class_path: smileval.models.openai.OpenAIChatCompletionModel
   # class_path: smileval.models.openai.OpenAITextCompletionModel
   init_args:
     # name: "phi3:3.8b-mini-instruct-4k-fp16" #"doesntmatterforllamacppserver"
     # name: "llama3.1:8b"
-    name: "hf:NousResearch/Nous-Hermes-2-Yi-34B"
+    # name: "grok-beta"
+    name: "gemma3:27b-it-qat"
     # tokenizer: https://huggingface.co/microsoft/Phi-3-medium-128k-instruct/blob/main/tokenizer_config.json
     # name: "openchat/openchat-7b:free" # :8b-instruct-fp16
     # ensures we don't artifically run out of context
@@ -24,9 +25,9 @@ model:
     # base_url: "https://openrouter.ai/api/v1"
 
 namespace: mcq_v5
-id: glhfchat-Nous-Hermes-2-Yi-34B
+id: ol-gemma3-27b-qat
 seed: 69424269
-parallel: 1
+parallel: 8
 sleep: 0
 options:
   class_path: smileval.models.ChatCompletionOptions
